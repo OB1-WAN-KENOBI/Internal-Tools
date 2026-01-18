@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig(({ mode }) => {
-  // Read base path from environment variable
-  const basePath = process.env.VITE_BASE_PATH || '/'
+  // Use /Internal-Tools/ for production (GitHub Pages), / for development
+  const basePath = mode === 'production' ? '/Internal-Tools/' : '/'
   
   return {
     plugins: [react()],
