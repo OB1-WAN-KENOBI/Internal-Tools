@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001'
+import { API_BASE_URL } from '@/shared/config'
 
 export class ApiError extends Error {
   constructor(
@@ -14,6 +14,11 @@ export async function apiClient<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
+  // In production, return empty data or throw error
+  if (!API_BASE_URL) {
+    throw new ApiError(503, 'API not available in production demo')
+  }
+
   const url = `${API_BASE_URL}${endpoint}`
 
   try {

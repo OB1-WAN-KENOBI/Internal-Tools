@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import type { DashboardMetrics } from '@/shared/types'
+import { API_BASE_URL } from '@/shared/config'
 
 export function useRealtimeMetrics() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
@@ -18,10 +19,39 @@ export function useRealtimeMetrics() {
       return
     }
 
+    // In production, use mock data instead of SSE
+    if (!API_BASE_URL) {
+      setIsLoading(false)
+      // Generate mock metrics
+      const generateMockMetrics = (): DashboardMetrics => ({
+        activeUsers: Math.floor(Math.random() * 500) + 100,
+        eventsPerMinute: Math.floor(Math.random() * 200) + 50,
+        errorRate: Math.random() * 10,
+        revenue: Math.floor(Math.random() * 5000) + 1000,
+      })
+      
+      setMetrics(generateMockMetrics())
+      setHistory([generateMockMetrics()])
+      
+      // Update metrics every 5 seconds
+      const interval = setInterval(() => {
+        if (isMountedRef.current) {
+          const newMetrics = generateMockMetrics()
+          setMetrics(newMetrics)
+          setHistory((prev) => [...prev.slice(-29), newMetrics])
+        }
+      }, 5000)
+      
+      return () => {
+        isMountedRef.current = false
+        clearInterval(interval)
+      }
+    }
+
     console.log('🔌 Connecting to SSE endpoint...')
     
     try {
-      const eventSource = new EventSource('http://localhost:3001/metrics/stream')
+      const eventSource = new EventSource(`${API_BASE_URL}/metrics/stream`)
       eventSourceRef.current = eventSource
 
       eventSource.onopen = () => {

@@ -5,6 +5,7 @@ import { Button } from '@/shared/ui/Button'
 import { Input } from '@/shared/ui/Input'
 import { Label } from '@/shared/ui/Label'
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/Card'
+import { API_BASE_URL } from '@/shared/config'
 import toast from 'react-hot-toast'
 
 export function LoginPage() {
@@ -66,14 +67,25 @@ export function LoginPage() {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
-          <div className="mt-6 text-sm text-muted-foreground">
-            <p className="font-semibold mb-2">Demo Credentials:</p>
-            <div className="space-y-1 font-mono text-xs">
-              <p>Admin: admin@company.com / admin123</p>
-              <p>Manager: manager@company.com / manager123</p>
-              <p>Viewer: viewer@company.com / viewer123</p>
+          {!API_BASE_URL && (
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm text-muted-foreground">
+              <p className="font-semibold mb-2 text-blue-900 dark:text-blue-100">Demo Mode:</p>
+              <div className="space-y-1 font-mono text-xs">
+                <p>Email: demo@example.com</p>
+                <p>Password: demo</p>
+              </div>
             </div>
-          </div>
+          )}
+          {API_BASE_URL && (
+            <div className="mt-6 text-sm text-muted-foreground">
+              <p className="font-semibold mb-2">Demo Credentials:</p>
+              <div className="space-y-1 font-mono text-xs">
+                <p>Admin: admin@company.com / admin123</p>
+                <p>Manager: manager@company.com / manager123</p>
+                <p>Viewer: viewer@company.com / viewer123</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

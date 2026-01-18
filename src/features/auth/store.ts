@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { User } from '@/shared/types'
+import { API_BASE_URL } from '@/shared/config'
 
 interface AuthState {
   user: User | null
@@ -16,7 +17,28 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('auth_token'),
 
   login: async (email: string, password: string) => {
-    const response = await fetch('http://localhost:3001/users')
+    // In production demo, use mock authentication
+    if (!API_BASE_URL) {
+      // Mock user for demo
+      const mockUser: User = {
+        id: '1',
+        name: 'Demo User',
+        email: 'demo@example.com',
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+      }
+      
+      if (email === 'demo@example.com' && password === 'demo') {
+        const token = `token_${mockUser.id}_${Date.now()}`
+        localStorage.setItem('auth_token', token)
+        localStorage.setItem('auth_user', JSON.stringify(mockUser))
+        set({ user: mockUser, token, isAuthenticated: true })
+        return
+      }
+      throw new Error('Invalid credentials. Use demo@example.com / demo')
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users`)
     const users: User[] = await response.json()
 
     const user = users.find(
@@ -35,7 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     set({ user, token, isAuthenticated: true })
 
-    await fetch('http://localhost:3001/auditLogs', {
+    await fetch(`${API_BASE_URL}/auditLogs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
