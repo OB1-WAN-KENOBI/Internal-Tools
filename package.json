@@ -11,7 +11,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "playwright test",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "VITE_BASE_PATH=/Internal-Tools/ npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

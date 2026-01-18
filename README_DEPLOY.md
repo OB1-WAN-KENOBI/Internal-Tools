@@ -19,7 +19,7 @@
 3. Настройте GitHub Pages:
    - Settings → Pages → Source: `gh-pages` branch
 
-4. URL будет: `https://YOUR_USERNAME.github.io/internal-tools/`
+4. URL будет: `https://OB1-WAN-KENOBI.github.io/Internal-Tools/`
 
 ## Обновление
 
